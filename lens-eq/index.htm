@@ -5,16 +5,17 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css"
           integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+    <title>等效焦距計算</title>
 </head>
 <body>
 <div class="container">
     <h1>等效焦距計算</h1>
     <div class="row">
         <div class="col-sm">
-            <h4>Lens</h4>
+            <h4>鏡頭</h4>
 
             <label>
-                Focus:
+                焦長
                 <input id="focusLength" value="35-100" placeholder="35-100" size="6" disabled>
                 mm
             </label>
@@ -33,10 +34,10 @@
         </div>
 
         <div class="col-sm">
-            <h4>Body</h4>
-            <label> Sensor Size:
+            <h4>機身</h4>
+            <label> 感光元件
                 <select id="sensor" disabled>
-                    <option value="1">Full Frame</option>
+                    <option value="1">全幅</option>
                     <option value="1.6">APS-C (1.6)</option>
                     <option value="1.5">APS-C (1.5)</option>
                     <option value="2" selected>M43</option>
@@ -46,11 +47,11 @@
 
         <div class="col-sm">
             <h4>Modifier</h4>
-            <label>Converter:
+            <label>轉接環:
                 <select id="conversion" diabled>
                     <option value="0.64">0.64x Speedbooster</option>
                     <option value="0.71">0.71x Speedbooster</option>
-                    <option value="1" selected>Native</option>
+                    <option value="1" selected>無/平光</option>
                     <option value="1.4">1.4x Teleconverter</option>
                     <option value="2">2.0x Teleconverter</option>
                 </select>
@@ -60,7 +61,10 @@
     <div class="row">
         <div class="col">
             <h4>Results</h4>
-            <span id="r_focus">70-200</span> f/<span id="r_aperture">1.4</span> <span id="r_crop"></span>
+            <ul>
+                <li>等效焦長 <span id="r_focus">70-200</span>mm</li>
+                <li>光圈 f/<span id="r_aperture">1.4</span> <span id="r_crop"></span></li>
+            </ul>
         </div>
     </div>
 </div>
@@ -120,3 +124,4 @@
 </script>
 </body>
 </html>
+
