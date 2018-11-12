@@ -1,0 +1,217 @@
+<!doctype html>
+<html lang="zhTW">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css"
+          integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+    <title>鏡頭速算</title>
+</head>
+<body>
+<div class="container">
+    <div class="row">
+        <h1>鏡頭速算</h1>
+
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-md-5">
+                    <h2 class="col">機身</h2>
+                    <ul>
+                        <li>
+                            <label> 感光元件
+                                <select id="sensor" class="interactive" disabled>
+                                    <option value="1">全幅</option>
+                                    <option value="1.5">APS-C (1.5)</option>
+                                    <option value="1.6">APS-C (1.6)</option>
+                                    <option value="2" selected>M43</option>
+                                </select>
+                            </label>
+                        </li>
+                        <li>
+                            <label>轉接環:
+                                <select id="conversion" class="interactive" disabled>
+                                    <option value="0.64">0.64x Speedbooster</option>
+                                    <option value="0.71">0.71x Speedbooster</option>
+                                    <option value="1" selected>無/平光</option>
+                                    <option value="1.4">1.4x Teleconverter</option>
+                                    <option value="2">2.0x Teleconverter</option>
+                                </select>
+                            </label></li>
+                    </ul>
+                </div>
+                <div class="col-md-7">
+                    <h2>鏡頭</h2>
+                    <ul>
+                        <li>
+                            <label>
+                                <input id="focusRange" class="interactive" value="35-100" placeholder="35-100" size="6"
+                                       disabled>
+                                mm
+                            </label>，
+                            <label>
+                                f /<input id="fNumber" class="interactive" value="1.4" placeholder="1.4" size="2"
+                                          disabled>
+                            </label>
+                        </li>
+
+                        <li>
+                            <label>
+                                <select id="designedField" class="interactive" disabled>
+                                    <option value="1">全幅用</option>
+                                    <option value="1.5">APS-C (1.5)</option>
+                                    <option value="1.6">APS-C (1.6)</option>
+                                    <option value="2">M43</option>
+                                </select>
+                            </label>
+                        </li>
+                        <li>等效 <span id="eqFocus">70-200</span> mm
+                            f / <span id="eqFNumber">1.4</span> <span id="eqCrop"></span></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-5">
+                    <h2>景深參數</h2>
+                    <ul>
+                        <li>
+                            f /<span id="dofFNumber">1.4</span>
+                        </li>
+                        <li>
+                            <label title="Circle of Confusion，不對片幅校正" for="coc">模糊圈</label>:
+                            d / <input id="coc" value="1500" size="4" disabled>
+                        </li>
+                        <li>
+                            <label for="focalLength">焦長</label>:
+                            <input id="focalLength" class="interactive" value="100" size="3" disabled> mm
+                        </li>
+                        <li>
+                            <label for="subjectDistance">物距</label> :
+                            <input id="subjectDistance" class="interactive" value="0.5" size="4" disabled> m
+                        </li>
+                    </ul>
+                </div>
+                <div class="col-md-7">
+                    <h3>&nbsp; </h3>
+                    <ul>
+                        <li>
+                            超焦距: <span id="dofH">498</span> m
+                        </li>
+                        <li>
+                            準焦範圍: <span id="dofRange">0.500 ~ 0.500</span> m
+                        </li>
+                        <li>
+                            景深: <span id="dof">0.80</span> mm
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
+        integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
+        crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js"
+        integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49"
+        crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js"
+        integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy"
+        crossorigin="anonymous"></script>
+<script>
+    function f(s) {
+        return Number.parseFloat(s)
+    }
+
+    function f$(s) {
+        return f($(s).val());
+    }
+
+    function formatF(float, lengthFactor) {
+        lengthFactor = lengthFactor || 0;
+
+        let nDigits = lengthFactor + 2 - Math.log10(float);
+
+        if (Number.isNaN(float) || Number.isNaN(nDigits)) {
+            return '-';
+        }
+
+        if (float < 0.001) {
+            return 0
+        }
+
+        if (nDigits < 0) {
+            nDigits = 0;
+        }
+
+        if (nDigits > 100) {
+            nDigits = 100;
+        }
+        return float.toFixed(nDigits)
+    }
+
+    function genFocusConversion(ratio) {
+        return function (n) {
+            return (f(n) * ratio).toFixed(0)
+        }
+    }
+
+    function updateEq() {
+        const conversion = f$('#conversion');
+        const fNumber = f$('#fNumber');
+        $('#eqFNumber').text(formatF(fNumber * conversion));
+
+        const sensor = f$('#sensor');
+        const ratio = sensor * conversion;
+        $('#eqFocus').text($('#focusRange').val().replace(/\d+/g, genFocusConversion(ratio)));
+
+        const cropWarning = $('#eqCrop');
+        const cropRatio = ratio / f$('#designedField');
+        if (cropRatio < 1) {
+            cropWarning.text(`暗角 (${cropRatio.toFixed(2)})`);
+        } else {
+            cropWarning.text('');
+        }
+    }
+
+    function updateDof() {
+        const sensor = f$('#sensor');
+        const c = 43 / f$('#coc') / sensor;
+        const f = f$('#focalLength');
+        const N = f$('#fNumber');
+        const s = f$('#subjectDistance') * 1000;
+        const fsq = f * f;
+
+        const Dn = s * fsq / (fsq + N * c * (s - f));
+        const Df = s * fsq / (fsq - N * c * (s - f));
+
+        const H = fsq / N / c + f;
+
+        $('#dofH').text(formatF(H / 1000));
+        if (s >= H) {
+            $('#dofRange').text(`${formatF(Dn / 1000)} ~ Inf`);
+            $('#dof').text('Inf')
+        } else {
+            $('#dofRange').text(`${formatF(Dn / 1000, 1)} ~ ${formatF(Df / 1000, 1)}`);
+            $('#dof').text(formatF(Df - Dn))
+        }
+    }
+
+    function update() {
+        updateEq();
+        updateDof();
+    }
+
+    function init() {
+        $('.container')
+            .on('change', 'select', update)
+            .on('input', 'input:text', update);
+
+        update();
+        $('select.interactive, input.interactive').prop('disabled', 0);
+    }
+
+    $(init)
+</script>
+</body>
+</html>
+
